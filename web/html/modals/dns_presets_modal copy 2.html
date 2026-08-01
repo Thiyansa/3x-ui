@@ -1,0 +1,290 @@
+{{define "modals/dnsPresetsModal"}}
+<a-modal id="dnsPresets-modal" v-model="dnsPresetsModal.visible" :title="dnsPresetsModal.title" :closable="true"
+  :mask-closable="false" :footer="null" :class="themeSwitcher.currentTheme">
+  <a-list class="ant-dns-presets-list" bordered :style="{ width: '100%' }">
+    <a-list-item v-for="dns in dnsPresetsDatabase" :style="{ padding: '12px 16px' }">
+      <div class="ant-dns-presets-line">
+
+        <!-- LEFT SIDE: Tag + Protocol + Name -->
+        <div class="ant-dns-presets-info">
+          <!-- 1. TAG -->
+          <a-tag :color="dns.family ? 'purple' : (dns.malware ? 'red' : (dns.ads ? 'orange' : 'green'))">
+            [[ dns.family ? 'Family' : (dns.malware ? 'Malware' : (dns.ads ? 'Ads' : 'DNS')) ]]
+          </a-tag>
+
+          <!-- 2. PROTOCOL -->
+          <a-tag
+            v-if="dns.protocol"
+            :color="dns.protocol === 'DoQ'
+              ? 'blue'
+              : (dns.protocol === 'DoH'
+                ? 'cyan'
+                : (dns.protocol === 'DoH+DoQ'
+                  ? 'geekblue'
+                  : 'green'))"
+            size="small">
+            [[ dns.protocol ]]
+          </a-tag>
+
+          <!-- 3. NAME -->
+          <span class="ant-dns-presets-list-name">
+            [[ dns.name ]]
+          </span>
+        </div>
+
+        <!-- RIGHT SIDE: Install Button -->
+        <a-button
+          class="ant-dns-presets-install"
+          type="primary"
+          @click="dnsPresetsModal.install(dns.data)">
+          Install
+        </a-button>
+
+      </div>
+    </a-list-item>
+  </a-list>
+</a-modal>
+
+<style>
+  .ant-dns-presets-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .ant-dns-presets-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .ant-dns-presets-list-name {
+    font-weight: 500;
+  }
+
+  .ant-dns-presets-install {
+    margin-left: auto;
+  }
+
+  .dark .ant-dns-presets-list {
+    border-color: var(--dark-color-stroke);
+  }
+
+  .dark .ant-dns-presets-list-name {
+    color: var(--dark-color-text-primary);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 576px) {
+    .ant-dns-presets-line {
+      gap: 4px;
+    }
+    .ant-dns-presets-info {
+      gap: 4px;
+    }
+    .ant-dns-presets-install {
+      margin-left: 0;
+      width: 100%;
+      margin-top: 4px;
+    }
+  }
+</style>
+
+<script>
+  const dnsPresetsDatabase = [
+    // ====== UDP ======
+    {
+      name: 'Google DNS',
+      family: false,
+      malware: false,
+      ads: false,
+      protocol: 'UDP',
+      data: [
+        "8.8.8.8",
+        "8.8.4.4",
+        "2001:4860:4860::8888",
+        "2001:4860:4860::8844"
+      ]
+    },
+    {
+      name: 'Cloudflare DNS',
+      family: false,
+      malware: false,
+      ads: false,
+      protocol: 'UDP',
+      data: [
+        "1.1.1.1",
+        "1.0.0.1",
+        "2606:4700:4700::1111",
+        "2606:4700:4700::1001"
+      ]
+    },
+    {
+      name: 'AdGuard DNS',
+      family: false,
+      malware: false,
+      ads: true,
+      protocol: 'UDP',
+      data: [
+        "94.140.14.14",
+        "94.140.15.15",
+        "2a10:50c0::ad1:ff",
+        "2a10:50c0::ad2:ff"
+      ]
+    },
+    {
+      name: 'AdGuard Family DNS',
+      family: true,
+      malware: false,
+      ads: false,
+      protocol: 'UDP',
+      data: [
+        "94.140.14.14",
+        "94.140.15.15",
+        "2a10:50c0::ad1:ff",
+        "2a10:50c0::ad2:ff"
+      ]
+    },
+    {
+      name: 'Cloudflare Family DNS',
+      family: true,
+      malware: false,
+      ads: false,
+      protocol: 'UDP',
+      data: [
+        "1.1.1.3",
+        "1.0.0.3",
+        "2606:4700:4700::1113",
+        "2606:4700:4700::1003"
+      ]
+    },
+
+    // ====== DoH ======
+    {
+      name: 'Cloudflare DoH',
+      family: false,
+      malware: false,
+      ads: false,
+      protocol: 'DoH',
+      data: [
+        "https://cloudflare-dns.com/dns-query"
+      ]
+    },
+    {
+      name: 'Google DoH',
+      family: false,
+      malware: false,
+      ads: false,
+      protocol: 'DoH',
+      data: [
+        "https://dns.google/dns-query"
+      ]
+    },
+    {
+      name: 'Quad9 Secure DoH',
+      family: false,
+      malware: true,
+      ads: false,
+      protocol: 'DoH',
+      data: [
+        "https://dns.quad9.net/dns-query"
+      ]
+    },
+
+    // ====== DoQ ======
+    {
+      name: 'Google DoQ',
+      family: false,
+      malware: false,
+      ads: false,
+      protocol: 'DoQ',
+      data: [
+        "quic://dns.google"
+      ]
+    },
+    {
+      name: 'Cloudflare DoQ',
+      family: false,
+      malware: false,
+      ads: false,
+      protocol: 'DoQ',
+      data: [
+        "quic://cloudflare-dns.com"
+      ]
+    },
+    {
+      name: 'Quad9 DoQ',
+      family: false,
+      malware: true,
+      ads: false,
+      protocol: 'DoQ',
+      data: [
+        "quic://dns.quad9.net"
+      ]
+    },
+
+    // ====== DoH + DoQ ======
+    {
+      name: 'AdGuard DoH + DoQ',
+      family: false,
+      malware: false,
+      ads: true,
+      protocol: 'DoH+DoQ',
+      data: [
+        "https://dns.adguard-dns.com/dns-query",
+        "quic://dns.adguard-dns.com"
+      ]
+    },
+    {
+      name: 'Control D Ads DoH + DoQ',
+      family: false,
+      malware: false,
+      ads: true,
+      protocol: 'DoH+DoQ',
+      data: [
+        "https://freedns.controld.com/p1",
+        "quic://freedns.controld.com/p1"
+      ]
+    },
+    {
+      name: 'Control D Family DoH + DoQ',
+      family: true,
+      malware: false,
+      ads: false,
+      protocol: 'DoH+DoQ',
+      data: [
+        "https://freedns.controld.com/family",
+        "quic://freedns.controld.com/family"
+      ]
+    }
+  ];
+
+  const dnsPresetsModal = {
+    title: '',
+    visible: false,
+    selected: null,
+    install(selectedPreset) {
+      return ObjectUtil.execute(dnsPresetsModal.selected, selectedPreset);
+    },
+    show({ title = '', selected = (selectedPreset) => {}, isEdit = false }) {
+      this.title = title;
+      this.selected = selected;
+      this.visible = true;
+    },
+    close() {
+      dnsPresetsModal.visible = false;
+    },
+  };
+
+  new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#dnsPresets-modal',
+    data: {
+      dnsPresetsModal: dnsPresetsModal,
+    }
+  });
+</script>
+{{end}}
