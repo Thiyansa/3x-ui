@@ -52,6 +52,3 @@ For full documentation, please visit the [project Wiki](https://github.com/Thiya
    <img src="./media/donation-button-black.svg" alt="Crypto donation button by NOWPayments">
 </a>
 
-## Stargazers over Time
-
-[![Stargazers over time](https://starchart.cc/Thiyansa/3x-ui.svg?variant=adaptive)](https://starchart.cc/Thiyansa/3x-ui)
